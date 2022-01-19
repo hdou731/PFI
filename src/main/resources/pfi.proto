@@ -1,0 +1,8 @@
+syntax = "proto2";
+package squareup.protos.tbd.pfi;
+
+option java_package = "com.squareup.protos.tbd.pfi";
+
+message TestRequest {
+  optional string test = 1;
+}
