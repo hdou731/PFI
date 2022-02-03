@@ -33,7 +33,20 @@ public class WyreController {
   };
 
   public static Handler payout = ctx -> {
-    String transferId = WyreClient.payout();
+    String amount = Objects.requireNonNull(ctx.pathParam("amount"));
+    String transferId = WyreClient.payout(amount);
     ctx.result(transferId);
+  };
+
+  public static Handler getTransferStatus = ctx -> {
+    String transferId = Objects.requireNonNull(ctx.pathParam("transferId"));
+    String status = WyreClient.getTransferStatus(transferId);
+    ctx.result(String.format("Transfer Status: %s", status));
+  };
+
+  public static Handler getWalletBalance = ctx -> {
+    String walletToken = Objects.requireNonNull(ctx.pathParam("walletToken"));
+    Integer balance = WyreClient.getWalletBalance(walletToken);
+    ctx.result(String.format("USDC Balance: %s", balance.toString()));
   };
 }

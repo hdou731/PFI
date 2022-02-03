@@ -119,29 +119,29 @@ public class WyreClient {
     return jsonResponse.getString("reservation");
   }
 
-  public static String payout() throws Exception {
+  public static String payout(String amount) throws Exception {
     OkHttpClient client = new OkHttpClient();
 
     MediaType mediaType = MediaType.parse("application/json");
-    RequestBody body = RequestBody.create(mediaType, "{"
+    RequestBody body = RequestBody.create(mediaType, String.format("{"
         + "\"autoConfirm\":true,"
         + "\"source\":\"wallet:WA_8FPWBHUXMWR\","
         + "\"sourceCurrency\":\"USDC\","
         + "\"destCurrency\":\"USD\","
-        + "\"destAmount\":10,"
+        + "\"destAmount\":%s,"
         + "\"dest\":{"
-            + "\"paymentMethodType\":\"INTERNATIONAL_TRANSFER\","
-            + "\"country\":\"US\","
-            + "\"currency\":\"USD\","
-            + "\"paymentType\":\"LOCAL_BANK_WIRE\","
-            + "\"firstNameOnAccount\":\"Billy-Bob\","
-            + "\"lastNameOnAccount\":\"Jones\","
-            + "\"accountNumber\":\"0000000000000\","
-            + "\"routingNumber\":\"0000000000\","
-            + "\"accountType\":\"CHECKING\","
-            + "\"bankName\":\"JP Morgan\""
-        + "}}"
-    );
+        + "\"paymentMethodType\":\"INTERNATIONAL_TRANSFER\","
+        + "\"country\":\"US\","
+        + "\"currency\":\"USD\","
+        + "\"paymentType\":\"LOCAL_BANK_WIRE\","
+        + "\"firstNameOnAccount\":\"Billy-Bob\","
+        + "\"lastNameOnAccount\":\"Jones\","
+        + "\"accountNumber\":\"0000000000000\","
+        + "\"routingNumber\":\"0000000000\","
+        + "\"accountType\":\"CHECKING\","
+        + "\"bankName\":\"JP Morgan\""
+        + "}}", amount
+    ));
     Request request = new Request.Builder()
         .url("https://api.testwyre.com/v2/transfers")
         .post(body)
@@ -154,5 +154,37 @@ public class WyreClient {
 
     JSONObject jsonResponse = new JSONObject(response.body().string());
     return jsonResponse.getString("id");
+  }
+
+  public static String getTransferStatus(String transferId) throws Exception {
+    OkHttpClient client = new OkHttpClient();
+
+    Request request = new Request.Builder()
+        .url(String.format("https://api.testwyre.com/v3/transfers/%s", transferId))
+        .get()
+        .addHeader("Accept", "application/json")
+        .addHeader("Authorization", "Bearer SK-WUEY3J78-3FJBFVEM-MAZM7XHC-NGCW2G4F")
+        .build();
+
+    Response response = client.newCall(request).execute();
+
+    JSONObject jsonResponse = new JSONObject(response.body().string());
+    return jsonResponse.getString("status");
+  }
+
+  public static Integer getWalletBalance(String walletToken) throws Exception {
+    OkHttpClient client = new OkHttpClient();
+
+    Request request = new Request.Builder()
+        .url(String.format("https://api.testwyre.com/v2/wallet/%s", walletToken))
+        .get()
+        .addHeader("Accept", "application/json")
+        .addHeader("Authorization", "Bearer SK-WUEY3J78-3FJBFVEM-MAZM7XHC-NGCW2G4F")
+        .build();
+
+    Response response = client.newCall(request).execute();
+
+    JSONObject jsonResponse = new JSONObject(response.body().string());
+    return jsonResponse.getJSONObject("balances").getInt("USDC");
   }
 }
