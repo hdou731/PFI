@@ -21,6 +21,10 @@ public class WyreApplication {
 
     app.get("/getWalletOrder/{orderId}", WyreController.getWalletOrder);
 
-    app.get("/payout", WyreController.payout);
+    app.get("/payout/{amount}", WyreController.payout);
+
+    app.get("/getTransferStatus/{transferId}", WyreController.getTransferStatus);
+
+    app.get("/getWalletBalance/{walletToken}", WyreController.getWalletBalance);
   }
 }
