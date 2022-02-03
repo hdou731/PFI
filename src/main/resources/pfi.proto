@@ -3,6 +3,15 @@ package squareup.protos.tbd.pfi;
 
 option java_package = "com.squareup.protos.tbd.pfi";
 
-message TestRequest {
-  optional string test = 1;
+message WyreWallet {
+  optional string id = 1;
+  optional string type = 2;
+  optional string name = 3;
+  optional DepositAddresses deposit_addresses = 4;
+  optional string srn = 5;
+}
+
+message DepositAddresses {
+  optional string btc_address = 1;
+  optional string eth_address = 2;
 }
